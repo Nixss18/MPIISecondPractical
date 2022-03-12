@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">NearbyPlacesApp</string>
-    <string name="maps_api_key">AIzaSyCHuUVu3nPfhCyHNaoh_U7jhNQS34d4ONU</string>
+    <string name="maps_api_key">YOUR API KEY</string>
 </resources>
