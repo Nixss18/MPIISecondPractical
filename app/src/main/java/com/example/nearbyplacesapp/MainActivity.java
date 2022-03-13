@@ -10,6 +10,8 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -42,59 +44,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        cafe = findViewById(R.id.restaurants_near);
+        cafe = findViewById(R.id.restaurants_near); //atrod pogas
         shops = findViewById(R.id.markets_near);
         pharmacy = findViewById(R.id.pharmacy_near);
 
-        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI);
+        mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.mapAPI); //kartes fragments
         mapFragment.getMapAsync(this);
         client = LocationServices.getFusedLocationProviderClient(this.getApplicationContext());
 
-        cafe.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
-                        "?location="+lat+","+lng+"&radius=5000"+"&types=restaurant"+"&sensor=true"+
-                        "&key=" + getResources().getString(R.string.maps_api_key);
-                Log.i("link", url);
-                Object dataFetch[] = new Object[2];
-                dataFetch[0] = map;
-                dataFetch[1] = url;
-                GatherPlaceData gpd = new GatherPlaceData();
-                gpd.execute(dataFetch);
-            }
-        });
-
-        shops.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
-                        "?location="+lat+","+lng+"&radius=5000"+"&types=store"+"&sensor=true"+
-                        "&key=" + getResources().getString(R.string.maps_api_key);
-                Object dataFetch[] = new Object[2];
-                dataFetch[0] = map;
-                dataFetch[1] = url;
-
-                GatherPlaceData gpd = new GatherPlaceData();
-                gpd.execute(dataFetch);
-            }
-        });
-
-        pharmacy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
-                        "?location="+lat+","+lng+"&radius=5000"+"&types=pharmacy"+"&sensor=true"+
-                        "&key=" + getResources().getString(R.string.maps_api_key);
-                Object dataFetch[] = new Object[2];
-                dataFetch[0] = map;
-                dataFetch[1] = url;
-
-                GatherPlaceData gpd = new GatherPlaceData();
-                gpd.execute(dataFetch);
-            }
-        });
     }
 
     @Override
@@ -111,6 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             return;
         }
 
+        map.setMyLocationEnabled(true);
         LocationRequest locationRequest = LocationRequest.create(); //pieprasa lokāciju
         locationRequest.setInterval(60000); //uzliek intervālu ar kādu tiks updeitota lokācija milisekundēs
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); //uzliek prioritāti high_accuracy
@@ -119,7 +77,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         LocationCallback locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
-                Toast.makeText(getApplicationContext(), "location result is =" + locationResult, Toast.LENGTH_LONG).show();
+               // Toast.makeText(getApplicationContext(), "location result is =" + locationResult, Toast.LENGTH_LONG).show();
 
                 if(locationRequest == null){ //pārbauda vai ir kāda lokācija
                     //Toast.makeText(getApplicationContext(), "Current location is null", Toast.LENGTH_LONG).show();
@@ -143,9 +101,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     lng = location.getLongitude();
                     LatLng latLng = new LatLng(lat,lng);
 
-                    map.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
+                    //map.addMarker(new MarkerOptions().position(latLng).title("Current Location"));
                     map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
                 }
             }
         });
@@ -160,6 +119,53 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     getCurrentLocation();
                 }
         }
+    }
+
+    public void onButtonClick(View view){
+        switch(view.getId()){
+            case R.id.restaurants_near:
+                //map.clear();
+                String url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
+                        "?location="+lat+","+lng+"&radius=5000"+"&types=restaurant"+"&sensor=true"+
+                        "&key=" + getResources().getString(R.string.maps_api_key);
+                Log.i("link", url);
+                Object dataFetch[] = new Object[2];
+                dataFetch[0] = map;
+                dataFetch[1] = url;
+                GatherPlaceData gpd = new GatherPlaceData();
+                gpd.execute(dataFetch);
+                break;
+
+            case R.id.markets_near:
+                //map.clear();
+                String url1 = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
+                        "?location="+lat+","+lng+"&radius=5000"+"&types=store"+"&sensor=true"+
+                        "&key=" + getResources().getString(R.string.maps_api_key);
+                Object dataFetch1[] = new Object[2];
+                dataFetch1[0] = map;
+                dataFetch1[1] = url1;
+
+                GatherPlaceData gpd1 = new GatherPlaceData();
+                gpd1.execute(dataFetch1);
+                break;
+            case R.id.pharmacy_near:
+                //map.clear();
+                String url2 = "https://maps.googleapis.com/maps/api/place/nearbysearch/json" +
+                        "?location="+lat+","+lng+"&radius=5000"+"&types=pharmacy"+"&sensor=true"+
+                        "&key=" + getResources().getString(R.string.maps_api_key);
+                Object dataFetch2[] = new Object[2];
+                dataFetch2[0] = map;
+                dataFetch2[1] = url2;
+
+                GatherPlaceData gpd2 = new GatherPlaceData();
+                gpd2.execute(dataFetch2);
+        }
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu){
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu,menu);
+        return true;
     }
 
 }

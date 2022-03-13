@@ -34,6 +34,8 @@ public class DownloadUrl {
             }
             urlString = sb.toString();
             bufferedReader.close();
+            httpURLConnection.disconnect();
+            inputStream.close();
         }catch (Exception e){
             Log.d("Exception", e.toString());
         }
